@@ -7,6 +7,10 @@ class CityModel extends BaseModel {
                      FROM city`
         return await this.querySQL(sql);
     }
+    async getCityById(id) {
+        const sql = `SELECT * FROM city WHERE cityNumber = ${id}`;
+        return await this.querySQL(sql);
+    }
 
     async deleteCityByID(id) {
         const sql = `DELETE
@@ -21,7 +25,7 @@ class CityModel extends BaseModel {
         return await this.querySQL(sql);
     }
     async createNewCity(data){
-        const sql = `INSERT INTO city VALUES ('${data.newNameCity}', '${data.newID}', '${data.newNational}', '${data.newArea}', '${data.newPopulation}', '${data.newIntroduce}' )`
+        const sql = `INSERT INTO city VALUES ('${data.newNameCity}', ${data.newID}, ${data.newNational}, '${data.newArea}', ${data.newPopulation}, ${data.newGDP}, '${data.newIntroduce}')`
         return await this.querySQL(sql);
     }
 }

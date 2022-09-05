@@ -15,7 +15,7 @@ class Controller {
         cityDB.forEach((city,index) => {
             html += `<tr>`
             html += `<td>${index + 1}</td>`;
-            html += `<td>${city.cityName}</td>`;
+            html += `<td><a href="/viewDetail?index=${city.cityNumber}">${city.cityName}</a></td>`;
             html += `<td>${city.national}</td>`;
             html += `<td><a href="/deleteCities?index=${city.cityNumber}" class="btn btn-danger">Delete</a></td>`;
             html += `<td><a href="/updateCities?index=${city.cityNumber}" class="btn btn-primary">Update</a></td>`;
@@ -44,7 +44,6 @@ class Controller {
         req.on('data', chunk => data += chunk)
         req.on('end', async () => {
             let city = qs.parse(data)
-            console.log(city);
             await this.cityModel.updateCitybyID(city, index);
             res.writeHead(301, {'Location': '/'});
             res.end();
@@ -75,12 +74,37 @@ class Controller {
         req.on('data', chunk => data += chunk);
         req.on('end', async () => {
             let city = qs.parse(data);
-            console.log(city)
+
             await this.cityModel.createNewCity(city);
             res.writeHead(301, {'Location': '/'})
             res.end();
         })
     }
+   async showViewDetail(req, res) {
+       let id = qs.parse(url.parse(req.url).query).index;
+       let dataReplace =  await this.cityModel.getCityById(id)
+       let cityName = dataReplace[0].cityName;
+       let national = dataReplace[0].national;
+       let area = dataReplace[0].area;
+       let population = dataReplace[0].population;
+       let gdp = dataReplace[0].gdp;
+       let introduce = dataReplace[0].introduce;
+       console.log(cityName)
 
+        fs.readFile('./viewDetail.html', 'utf8', (err, data) => {
+            if (err) {
+                console.log(err.message)
+            }
+            data = data.replace('{national}', national)
+            data = data.replace('{city-name}', cityName)
+            data = data.replace('{population}', population)
+            data = data.replace('{area}', area)
+            data = data.replace('{introduce}',introduce)
+            data = data.replace('{GDP}' ,gdp)
+            res.writeHead(200, {'Location': 'text/html'});
+            res.write(data);
+            res.end();
+        })
+    }
 }
 module.exports = Controller;

@@ -40,8 +40,10 @@ const server = http.createServer(function(req, res){
             else {
                 controller.createCity(req, res);
             }
-
         break;
+        case '/viewDetail':
+            controller.showViewDetail(req, res);
+            break;
         default:
             res.end();
             break;
